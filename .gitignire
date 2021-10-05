@@ -5,4 +5,5 @@ master_tcp
 cscope.out
 ccscope.out.in
 scope.out.po
+scope.out.files
 core
