@@ -66,7 +66,8 @@ int main(void)
 	}
 
 	if (modbus_set_debug(ctx, TRUE) == -1) {
-		perror("modbus_set_debug");
+		fprintf(stderr, "modbus_set_debug: %s\n",
+				modbus_strerror(errno));
 	}
 
 	/*

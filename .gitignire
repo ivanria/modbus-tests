@@ -1,4 +1,8 @@
 *.d
 *.o
-*.cs
+slave_tcp
+master_tcp
+cscope.out
+ccscope.out.in
+scope.out.po
 core

@@ -23,7 +23,8 @@ int main(void)
 	}
 
 	if (modbus_set_debug(ctx, TRUE) == -1) {
-		perror("modbus_set_debug");
+		fprintf(stderr, "modbus_set_debug: %s\n",
+				modbus_strerror(errno));
 	}
 
 	/*
@@ -51,7 +52,8 @@ int main(void)
 
 	socket = modbus_tcp_listen(ctx, 100);
 	if (socket == -1) {
-		perror("modbus_tcp_listen");
+		fprintf(stderr, "modbus_tcp_listen: %s\n",
+				modbus_strerror(errno));
 		modbus_free(ctx);
 		return -1;
 	}
@@ -59,17 +61,20 @@ int main(void)
 	for (;;) {
 	
 		if (modbus_tcp_accept(ctx, &socket) == -1) {
-			perror("modbus_tcp_accept");
+			fprintf(stderr, "modbus_tcp_accept: %s\n",
+					modbus_strerror(errno));
 		}
 
 		if ((rc = modbus_receive(ctx, get_byte)) == -1) {
-			perror("modbus_recieve");
+			fprintf(stderr, "modbus_recieve: %s\n",
+					modbus_strerror(errno));
 		}
 	
 		fprintf(stderr, "recive %d byte\n", rc);
 
 		if ((rc = modbus_reply(ctx, get_byte, rc, mapping)) == -1) {
-			perror("modbus_reply");
+			fprintf(stderr, "modbus_reply: %s\n",
+					modbus_strerror(errno));
 		}
 	}
 
