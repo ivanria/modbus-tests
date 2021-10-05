@@ -16,10 +16,10 @@ all: master_tcp slave_tcp
 .PHONY: clean
 clean:
 
-master_tcp: master_tcp.o
+master_tcp: master_tcp.o func.o
 	$(CC) -o $@ $^ $(LDFLAGS) 
 
-slave_tcp: slave_tcp.o
+slave_tcp: slave_tcp.o func.o
 	$(CC) -o $@ $^ $(LDFLAGS) 
 
 %.o: %.d
