@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
+#include <stdbool.h>
 
 #include <modbus/modbus.h>
 
@@ -35,15 +36,11 @@ int main(void)
 	}
 
 	ctx = modbus_new_tcp("127.0.0.1", 33333);
-	if (ctx == NULL) {
-		fprintf(stderr, "Unable to allocate libmodbus context\n");
-		return -1;
-	}
+	if (ctx == NULL)
+		print_err(errno, "modbus_new_tcp", ctx);
 
-	if (modbus_set_debug(ctx, TRUE) == -1) {
-		fprintf(stderr, "modbus_set_debug: %s\n",
-				modbus_strerror(errno));
-	}
+	if (modbus_set_debug(ctx, TRUE) == -1)
+		print_err(errno, "modbus_set_debug", NULL);
 
 	/*
 	if (modbus_set_slave(ctx, YOUR_DEVICE_ID) == -1) {
@@ -58,11 +55,8 @@ int main(void)
 
 		if ((rc = modbus_read_input_registers(ctx, 0,
 						INPUT_REGISTERS_NR,
-						read_registers)) == -1) {
-			fprintf(stderr, "modbus_read_input_registers: %s\n",
-					modbus_strerror(errno));
-			return -1;
-		}
+						read_registers)) == -1)
+			print_err(errno, "modbus_read_input_registers", ctx);
 
 		PRINT_GET_WRAP(read_registers, rc,
 				"modbus_read__input_registers()");
@@ -72,11 +66,8 @@ int main(void)
 		 * argument
 		 */
 		if ((rc = modbus_read_registers(ctx, 0, REGISTERS_NR,
-					read_registers)) == -1) {
-			fprintf(stderr, "modbus_read_registers: %s\n",
-					modbus_strerror(errno));
-			return -1;
-		}
+					read_registers)) == -1)
+			print_err(errno, "modbus_read_registers", ctx);
 
 		PRINT_GET_WRAP(read_registers, rc, "modbus_read_registers()");
 
@@ -90,51 +81,35 @@ int main(void)
 		 * argument
 		 */
 		if ((rc = modbus_write_registers(ctx, 0, REGISTERS_NR / 2,
-						read_registers)) == -1) {
-			fprintf(stderr, "modbus_write_registers: %s\n",
-					modbus_strerror(errno));
-			return -1;
-		}
+						read_registers)) == -1)
+			print_err(errno, "modbus_write_registers", ctx);
 		
 		connect_to_server(ctx);
 
-		if ((rc = modbus_write_register(ctx, 0, 0xA)) == -1) {
-			fprintf(stderr, "modbus_write_register: %s\n",
-					modbus_strerror(errno));
-			return -1;
-		}
+		if ((rc = modbus_write_register(ctx, 0, 0xA)) == -1)
+			print_err(errno, "modbus_write_registers", ctx);
 
 		connect_to_server(ctx);
 
 		if ((rc = modbus_read_registers(ctx, 0, REGISTERS_NR,
-					read_registers)) == -1) {
-			fprintf(stderr, "modbus_read_registers: %s\n",
-					modbus_strerror(errno));
-			return -1;
-		}
+					read_registers)) == -1)
+			print_err(errno, "modbus_read_registers", ctx);
 
 		PRINT_GET_WRAP(read_registers, rc, "modbus_read_registers()");
 
 		connect_to_server(ctx);
 
 		if ((rc = modbus_read_bits(ctx, 0, BITS_NB,
-						read_bits)) == -1) {
-			fprintf(stderr, "modbus_read_bits: %s\n",
-					modbus_strerror(errno));
-			modbus_free(ctx);
-			return -1;
-		}
+						read_bits)) == -1)
+			print_err(errno, "modbus_read_bits", ctx);
 
 		PRINT_GET_WRAP(read_bits, rc, "modbus_read_bits()");
 
 		connect_to_server(ctx);
 
 		if ((rc = modbus_read_input_bits(ctx, 0, INPUT_BITS_NB,
-						read_bits)) == -1) {
-			fprintf(stderr, "modbus_read_input_bits: %s\n",
-					modbus_strerror(errno));
-			return -1;
-		}
+						read_bits)) == -1)
+			print_err(errno, "modbus_read_input_bits", ctx);
 
 		PRINT_GET_WRAP(read_bits, rc, "modbus_read_input_bits()");
 
@@ -143,21 +118,15 @@ int main(void)
 		/* BITS_NB is size of first argument of
 		 * modbus_mapping_new on server side - 1
 		 */
-		if (modbus_write_bit(ctx, BITS_NB - 1, ON) == -1) {
-			fprintf(stderr, "modbus_write_bit, %s\n",
-					modbus_strerror(errno));
-			return -1;
-		}
+		if (modbus_write_bit(ctx, BITS_NB - 1, ON) == -1)
+			print_err(errno, "modbus_write_bits", ctx);
 
 		connect_to_server(ctx);
 
 		if ((rc = modbus_write_bits(ctx, 0, SOURCE_SIZE,
-						source)) == -1) {
-			fprintf(stderr, "modbus_write_bits: %s\n",
-					modbus_strerror(errno));
-			modbus_free(ctx);
-			return -1;
-		}
+						source)) == -1)
+			print_err(errno, "modbus_write_bits", ctx);
+
 		PRINT_GET_WRAP(source, rc, "modbus_write_bits()");
 	}
 

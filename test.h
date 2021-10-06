@@ -15,5 +15,6 @@ int EF_PROTECT_FREE = 1;
 
 void connect_to_server(modbus_t *ctx);
 void print_get(void *a, size_t memb_s, size_t s, char *func);
+void print_err(int err, char *func, modbus_t *ctx);
 
 #endif
