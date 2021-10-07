@@ -1,25 +1,24 @@
 SOURCES		:= $(wildcard *.c)
 OBJECTS		:= $(patsubst %c,%o,$(SOURCES))
 DEPFILES	:= $(patsubst %.c,%.d,$(SOURCES))
-export CC	:= gcc
 #ifeq ($(IF_DEBUG),true)
-export CFLAGS := -Wall -Wextra -Wpedantic -g
-export LDFLAGS := -lefence -lmodbus
+CFLAGS += -Wall -Wextra -Wpedantic -g
+LDFLAGS += -lefence -lmodbus
 #else
 #export CFLAGS := -Wall -Wextra -Wpedantic -g
 #export LDFLAGS := -lmodbus
 #endif
 
 .PHONY: all
-all: master_tcp slave_tcp
+all: master slave
 
 .PHONY: clean
 clean:
 
-master_tcp: master_tcp.o func.o
+master: master.o func.o
 	$(CC) -o $@ $^ $(LDFLAGS) 
 
-slave_tcp: slave_tcp.o func.o
+slave: slave.o func.o
 	$(CC) -o $@ $^ $(LDFLAGS) 
 
 %.o: %.d
@@ -33,7 +32,7 @@ endif
 
 .PHONY: cleanall clean
 clean:
-	rm -f $(OBJECTS) slave_tcp  master_tcp
+	rm -f $(OBJECTS) slave  master
 
 cleanall: clean
 	rm -f $(DEPFILES)

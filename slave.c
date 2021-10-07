@@ -12,14 +12,23 @@ int main(void)
 {
 	modbus_t *ctx;
 	uint8_t get_byte[MODBUS_TCP_MAX_ADU_LENGTH];
-	int rc, socket, i;
+#ifdef TCP
+	int socket;
+#endif
+	int rc, i;
 	modbus_mapping_t *mapping;
 
 	fprintf(stdout, "MODBUS_TCP_MAX_ADU_LENGTH = %d\n",
 			MODBUS_TCP_MAX_ADU_LENGTH);
 
-	if ((ctx = modbus_new_tcp(NULL, 33333)) == NULL)
+#ifdef TCP
+	if ((ctx = modbus_new_tcp(NULL, TCP_PORT)) == NULL)
 		print_err(errno, "modbus_new_tcp", ctx);
+#elif defined(RTU)
+	if ((ctx = modbus_new_rtu(TTY_DEV, BAUD, PARITY, DATA_BIT,
+					STOP_BIT)) == NULL)
+		print_err(errno, "modbus_new_rtu", ctx);
+#endif
 
 	if (modbus_set_debug(ctx, TRUE) == -1)
 		print_err(errno, "modbus_set_debug", NULL);
@@ -44,13 +53,20 @@ int main(void)
 		if (i % 2 == 0)
 			*(mapping->tab_input_bits + i) = ON;
 
+#ifdef TCP
 	if ((socket = modbus_tcp_listen(ctx, 100)) == -1)
 		print_err(errno, "modbus_tcp_listen", ctx);
+#elif defined(RTU)
+	if (modbus_connect(ctx) == -1)
+		print_err(errno, "modbus_connect", ctx);
+#endif
 
 	for (;;) {
 	
+#ifdef TCP
 		if (modbus_tcp_accept(ctx, &socket) == -1)
 			print_err(errno, "modbus_tcp_accept", ctx);
+#endif
 
 		if ((rc = modbus_receive(ctx, get_byte)) == -1)
 			print_err(errno, "modbus_recieve", ctx);

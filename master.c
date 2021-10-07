@@ -35,9 +35,14 @@ int main(void)
 		return -1;
 	}
 
-	ctx = modbus_new_tcp("127.0.0.1", 33333);
-	if (ctx == NULL)
+#ifdef TCP
+	if ((ctx = modbus_new_tcp("127.0.0.1", TCP_PORT)) == NULL)
 		print_err(errno, "modbus_new_tcp", ctx);
+#elif defined(RTU)
+	if ((ctx = modbus_new_rtu(TTY_DEV, BAUD, PARITY, DATA_BIT,
+					STOP_BIT)) == NULL)
+		print_err(errno, "modbus_new_rtu", ctx);
+#endif
 
 	if (modbus_set_debug(ctx, TRUE) == -1)
 		print_err(errno, "modbus_set_debug", NULL);

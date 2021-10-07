@@ -1,11 +1,23 @@
 #ifndef TEST_H
 #define TEST_H
 
+#ifndef TCP
+#ifndef RTU
+#define RTU
+#endif
+#endif
+
 int EF_ALIGNMENT = 0;
 int EF_PROTECT_FREE = 1;
 
 #define PRINT_GET_WRAP(a, s, str) print_get(a, sizeof(typeof(a[0])), s, str)
 
+#define TTY_DEV "/dev/ttyUSB0"
+#define BAUD 115200
+#define PARITY 'N'
+#define DATA_BIT 8
+#define STOP_BIT 0
+#define TCP_PORT 33333
 #define YOUR_DEVICE_ID 123
 #define SOURCE_SIZE 10
 #define BITS_NB 99
