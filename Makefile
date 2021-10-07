@@ -3,7 +3,7 @@ OBJECTS		:= $(patsubst %c,%o,$(SOURCES))
 DEPFILES	:= $(patsubst %.c,%.d,$(SOURCES))
 #ifeq ($(IF_DEBUG),true)
 CFLAGS += -Wall -Wextra -Wpedantic -g
-LDFLAGS += -lefence -lmodbus
+LDFLAGS += -lmodbus
 #else
 #export CFLAGS := -Wall -Wextra -Wpedantic -g
 #export LDFLAGS := -lmodbus
@@ -46,5 +46,4 @@ print_vars:
 	@echo "NODEP		= $(NODEP)"
 	@echo "SOURCES		= $(SOURCES)"
 	@echo "DEPFILES		= $(DEPFILES)"
-
 
